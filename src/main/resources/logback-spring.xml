@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <timestamp key="date" datePattern="yyyy_MM_dd"/>
+
+    <!-- 彩色日誌 -->
+    <!-- 彩色日誌依賴的渲染類 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+    <!-- 彩色日誌格式 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+    <contextName>archives_corpus</contextName>
+
+    <!--定義日誌文件的存儲地址 -->
+    <property name="LOG_HOME" value="logs"/>
+    <property name="PROJECT_NAME" value="common"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <!--此日誌appender是為開發使用，只配置最底級別，控制台輸出的日誌級別是大於或等於此級別的日誌信息-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <!--encoder 默認配置為PatternLayoutEncoder-->
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="mdcInfo" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>LOG_FILE_DISCRIMINATOR</key>
+            <defaultValue>%d{yyyy-MM}/System</defaultValue>
+        </discriminator>
+        <!-- Log過濾器，只接受INFO等級的Log，其餘排除 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <sift>
+            <appender name="infoLogRolling" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${LOG_HOME}/${PROJECT_NAME}/${LOG_FILE_DISCRIMINATOR}/Info_%d{yyyy_MM_dd}.log
+                    </fileNamePattern>
+                    <maxHistory>180</maxHistory>
+                    <totalSizeCap>40GB</totalSizeCap>
+                </rollingPolicy>
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+            </appender>
+        </sift>
+    </appender>
+
+    <appender name="mdcError" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>LOG_FILE_DISCRIMINATOR</key>
+            <defaultValue>%d{yyyy-MM}/System</defaultValue>
+        </discriminator>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <sift>
+            <appender name="errorLogRolling" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${LOG_HOME}/${PROJECT_NAME}/${LOG_FILE_DISCRIMINATOR}/Error_%d{yyyy_MM_dd}.log
+                    </fileNamePattern>
+                    <maxHistory>180</maxHistory>
+                    <totalSizeCap>40GB</totalSizeCap>
+                </rollingPolicy>
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+            </appender>
+        </sift>
+    </appender>
+
+    <appender name="RollingFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <!-- 可讓每天產生一個日誌文件，最多 180 個，自動回滾 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${PROJECT_NAME}/%d{yyyy-MM,aux}/heeexy-%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <!-- keep 180 days' worth of history capped at 50GB total size -->
+            <maxHistory>180</maxHistory>
+            <totalSizeCap>40GB</totalSizeCap>
+        </rollingPolicy>
+        <!-- 日誌文件的格式 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level --- [%file:%line][%thread] - %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="AsyncRollingFile" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="RollingFile"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <!-- 輸出到控制台和文件，可定義更多的 Appender -->
+    <root level="INFO">
+        <!--        <appender-ref ref="Console"/>-->
+        <appender-ref ref="AsyncRollingFile"/>
+        <appender-ref ref="mdcInfo"/>
+        <appender-ref ref="mdcError"/>
+    </root>
+
+    <!-- 下面配置一些第三方包的日誌過濾級別，用於避免刷屏 -->
+    <logger name="org.mybatis" level="INFO"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+    <!--如果需要打印SQL,可以把下面的級別設置為DEBUG -->
+    <!-- <logger name="com.heeexy.example.dao" level="DEBUG"/>-->
+
+</configuration>

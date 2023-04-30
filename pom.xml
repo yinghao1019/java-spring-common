@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>utils</artifactId>
+    <artifactId>common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>utils</name>
-    <description>utils</description>
+    <name>common</name>
+    <description>spring 常用code範例</description>
     <properties>
         <java.version>17</java.version>
         <spring-cloud-gcp.version>3.4.9</spring-cloud-gcp.version>
@@ -36,6 +36,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
             <version>3.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>

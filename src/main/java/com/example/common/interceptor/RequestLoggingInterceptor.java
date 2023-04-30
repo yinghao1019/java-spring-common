@@ -2,7 +2,7 @@ package com.example.common.interceptor;
 
 import com.example.common.constant.HeaderParam;
 import com.example.common.constant.LogParam;
-import com.example.common.http.HttpUtils;
+import com.example.common.utils.HttpUtils;
 import org.slf4j.MDC;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
@@ -36,7 +36,7 @@ public class RequestLoggingInterceptor implements WebRequestInterceptor {
         MDC.put("req.userAgent", httpServletRequest.getHeader("User-Agent"));
         MDC.put("req.xForwardedFor", httpServletRequest.getHeader("X-Forwarded-For"));
 
-        OffsetDateTime now = OffsetDateTime.now().toInstant().atOffset(ZoneOffset.of(""));
+        OffsetDateTime now = OffsetDateTime.now().toInstant().atOffset(ZoneOffset.of("+08:00"));
         String yearMonth = String.format("%s-%s", now.getYear(), String.format("%02d", now.getMonthValue()));
         MDC.put(LogParam.LOG_FILE_DISCRIMINATOR, yearMonth + "/User");
     }

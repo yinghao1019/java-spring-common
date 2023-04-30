@@ -38,7 +38,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
             .apiInfo(apiInfo())
             .select()
-            .apis(RequestHandlerSelectors.basePackage("com.example.utils.controller"))
+            .apis(RequestHandlerSelectors.basePackage("com.example.common.controller"))
             .paths(PathSelectors.any())
             //排除swagger 範例的controller
             .paths(Predicate.not(PathSelectors.regex("/error.*")))
