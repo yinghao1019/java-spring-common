@@ -1,6 +1,6 @@
 package com.example.utils.spreedsheet.report;
 
-import com.tpi.middle_bo_cl.exception.NoMatchingResourceException;
+import com.example.utils.exception.NoMatchingResourceException;
 
 public enum ReportType {
     EXCEL, ODS;

@@ -1,10 +1,9 @@
 package com.example.utils.spreedsheet;
 
-import com.tpi.middle_bo_cl.exception.BadRequestException;
-import com.tpi.middle_bo_cl.exception.InternalServerErrorException;
-import com.tpi.middle_bo_cl.spreadsheet.report.SheetType;
-import com.tpi.middle_bo_cl.spreadsheet.style.*;
-import com.tpi.middle_bo_cl.util.TPStringUtils;
+import com.example.utils.exception.BadRequestException;
+import com.example.utils.exception.InternalServerErrorException;
+import com.example.utils.spreedsheet.report.SheetType;
+import com.example.utils.spreedsheet.style.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -260,7 +259,7 @@ public class ExcelSpreadsheet implements Spreadsheet {
         int shiftRowSize = hasCreateDate ? 1 + titleShiftRowSize : titleShiftRowSize;
         buildTitle(map, startRowIndex, startColIndex, title, hasCreateDate);
         if (showColumnHeader) {
-            if (TPStringUtils.isNotEmpty(title)) {
+            if (StringUtils.isNotBlank(title)) {
                 shiftRowSize++;
             }
 
@@ -292,7 +291,7 @@ public class ExcelSpreadsheet implements Spreadsheet {
         int shiftRowSize = hasCreateDate ? 1 + titleShiftRowSize : titleShiftRowSize;
         buildTitle(map, startRowIndex, startColIndex, title, hasCreateDate);
         if (showColumnHeader) {
-            if (TPStringUtils.isNotEmpty(title)) {
+            if (StringUtils.isNotBlank(title)) {
                 shiftRowSize++;
             }
 
@@ -782,7 +781,7 @@ public class ExcelSpreadsheet implements Spreadsheet {
     }
 
     private String appendExtensionIfNot(String fileName) {
-        if (TPStringUtils.isNullOrEmpty(fileName)) {
+        if (StringUtils.isBlank(fileName)) {
             throw new BadRequestException("非法的檔案名稱");
         }
         String extension = SheetType.EXCEL.getExtension();
@@ -829,7 +828,7 @@ public class ExcelSpreadsheet implements Spreadsheet {
         int startColIndex,
         String title,
         boolean hasCreateDate) {
-        if (TPStringUtils.isNullOrEmpty(title)) {
+        if (StringUtils.isBlank(title)) {
             return this;
         }
         int mergedColumnCount = map.entrySet().size();
@@ -869,7 +868,7 @@ public class ExcelSpreadsheet implements Spreadsheet {
             ExcelColumn annotation = entry.getValue();
             String colName = annotation.colName();
             int columnIndex = annotation.colIndex();
-            if (TPStringUtils.isNotEmpty(annotation.mergeGroup())) {
+            if (StringUtils.isNotBlank(annotation.mergeGroup())) {
                 mergeCells(startRowIndex - annotation.rowSize(), 1, columnIndex,
                     annotation.mergeGroupSize(), headerStyle);
                 setCellValue(startRowIndex - annotation.rowSize(), columnIndex, annotation.mergeGroup(),

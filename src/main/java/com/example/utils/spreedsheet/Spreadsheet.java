@@ -1,6 +1,6 @@
 package com.example.utils.spreedsheet;
 
-import com.tpi.middle_bo_cl.spreadsheet.style.SpreadsheetStyle;
+import com.example.utils.spreedsheet.style.SpreadsheetStyle;
 import org.springframework.core.io.Resource;
 
 import java.io.File;

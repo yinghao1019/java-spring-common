@@ -1,7 +1,7 @@
 package com.example.utils.spreedsheet;
 
-import com.tpi.middle_bo_cl.spreadsheet.style.TpHorizontalAlignment;
-import com.tpi.middle_bo_cl.spreadsheet.style.TpVerticalAlignment;
+import com.example.utils.spreedsheet.style.TpHorizontalAlignment;
+import com.example.utils.spreedsheet.style.TpVerticalAlignment;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
